@@ -1,10 +1,10 @@
-import type { User } from "@prisma/client";
-import type { Request, Response } from "express";
-import { prisma } from "../../prisma/client";
-import { validationResult } from "express-validator";
 import config from "../config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { prisma } from "../../prisma/client";
+import { validationResult } from "express-validator";
+import { type User } from "@prisma/client";
+import { type Request, Response } from "express";
 
 const generateAccessToken = (id: User["id"], role: User["role"]) => {
   const payload = {
@@ -32,7 +32,7 @@ class AuthController {
       return res.json({ message: "Muvaffaqqiyatli ro'yxatdan o'tildi", user });
     } catch (error) {
       console.log(error);
-      res.status(400).json({ message: "Registratiyada xatolik yuz berdi!", error });
+      res.status(500).json({ message: "Registratiyada xatolik yuz berdi!", error });
     }
   }
 
@@ -51,7 +51,7 @@ class AuthController {
       return res.json({ token });
     } catch (e) {
       console.log(e);
-      res.status(400).json({ message: "Loginda xatolik yuz berdi!" });
+      res.status(500).json({ message: "Loginda xatolik yuz berdi!" });
     }
   }
 
@@ -63,6 +63,37 @@ class AuthController {
       res.json(users);
     } catch (e) {
       console.log(e);
+      res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
+    }
+  }
+
+  async editUser(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = await prisma.user.findFirst({ where: { id } });
+      if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
+      const body = req.body as User;
+      const updatedUser = prisma.user.update({
+        where: { id },
+        data: body,
+        select: { username: true, profileImg: true },
+      });
+      return res.json({ user: updatedUser, message: "Muvaffaqqiyatli yangilandi!" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
+    }
+  }
+  async deleteUser(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const user = await prisma.user.findFirst({ where: { id } });
+      if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
+      const deletedUser = await prisma.user.delete({ where: { id }, select: { username: true, profileImg: true } });
+      return res.json({ message: "Muvaffaqqiyatli o'chirildi!", deletedUser });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
     }
   }
 }
