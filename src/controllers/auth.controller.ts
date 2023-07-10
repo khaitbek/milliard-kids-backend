@@ -53,7 +53,7 @@ class AuthController {
         return res.status(400).json({ message: `Parol yoki username xato` });
       }
       const token = generateAccessToken(user.id, user.role);
-      return res.json({ token });
+      return res.json({ token, user });
     } catch (e) {
       console.log(e);
       res.status(500).json({ message: "Loginda xatolik yuz berdi!" });
