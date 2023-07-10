@@ -68,7 +68,7 @@ class AuthController {
 
   async getUsers(req: Request, res: Response) {
     try {
-      const users = await prisma.user.findMany({});
+      const users = await prisma.user.findMany({ select: { fullname: true, username: true } });
       res.json(users);
     } catch (e) {
       console.log(e);
