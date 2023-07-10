@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import config from "../config";
 
-module.exports = function (role: User["role"]) {
+export function roleMiddleware(role: User["role"]) {
   return function (req: Request, res: Response, next: NextFunction) {
     if (req.method === "OPTIONS") {
       next();
@@ -25,4 +25,4 @@ module.exports = function (role: User["role"]) {
       return res.status(403).json({ message: "Foydalanuvchi avtorizatsiyadan o'tmagan" });
     }
   };
-};
+}

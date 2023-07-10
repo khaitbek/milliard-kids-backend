@@ -1,12 +1,11 @@
+import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import config from "../config";
-import type { Request, Response, NextFunction } from "express";
 
-module.exports = function (req: Request, res: Response, next: NextFunction) {
+export function authMiddleware(req: Request, res: Response, next: NextFunction) {
   if (req.method === "OPTIONS") {
     next();
   }
-
   try {
     const token = req?.headers?.authorization?.split(" ")[1];
     if (!token) {
@@ -19,4 +18,4 @@ module.exports = function (req: Request, res: Response, next: NextFunction) {
     console.log(e);
     return res.status(403).json({ message: "User avtorizatsiyadan o'tmagan" });
   }
-};
+}

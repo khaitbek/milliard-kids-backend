@@ -17,8 +17,21 @@ enum Role {
 model User {
   id       String @id @default(uuid())
   email    String @unique
+  fullname String 
   username String 
   password String
-  role Role @default(USER)
   profileImg String?
+  role Role @default(USER) 
+  class Class? @relation(fields: [class_id],references: [id])
+  class_id String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Class {
+  id       String @id @default(uuid())
+  name     String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  students User[]
 }

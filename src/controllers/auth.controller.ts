@@ -1,10 +1,10 @@
-import config from "../config";
+import config from "@/config";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { prisma } from "../../prisma/client";
-import { validationResult } from "express-validator";
 import { type User } from "@prisma/client";
-import { type Request, Response } from "express";
+import { Response, type Request } from "express";
+import { validationResult } from "express-validator";
+import { prisma } from "../../prisma/client";
 
 const generateAccessToken = (id: User["id"], role: User["role"]) => {
   const payload = {
@@ -21,12 +21,15 @@ class AuthController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ message: "Xatolik yuz berdi!", errors });
       }
-      const { username, password, email, profileImg } = req.body as User;
-      const candidate = await prisma.user.findFirst({ where: { username, password } });
+      const body = req.body as User;
+      const candidate = await prisma.user.findFirst({ where: body });
       if (candidate) return res.status(400).json({ message: "Bunday foydalanuvchi mavjud" });
-      const hashPassword = bcrypt.hashSync(password, 7);
+      const hashPassword = bcrypt.hashSync(body.password, 7);
       const user = await prisma.user.create({
-        data: { username, password: hashPassword, email, profileImg },
+        data: {
+          ...body,
+          password: hashPassword,
+        },
         select: { email: true, id: true, profileImg: true, role: true, username: true },
       });
       return res.json({ message: "Muvaffaqqiyatli ro'yxatdan o'tildi", user });
@@ -38,8 +41,10 @@ class AuthController {
 
   async login(req: Request, res: Response) {
     try {
-      const { username, password } = req.body;
-      const user = await prisma.user.findFirst({ where: { username } });
+      const { email, password } = req.body as User;
+      if (!email) return res.status(400).json({ message: "Bunday foydalanuvchi mavjud emas" });
+      const user = await prisma.user.findFirst({ where: { email } });
+      console.log(user);
       if (!user) {
         return res.status(400).json({ message: `Parol yoki username xato` });
       }
@@ -57,9 +62,7 @@ class AuthController {
 
   async getUsers(req: Request, res: Response) {
     try {
-      const users = await prisma.user.findMany({
-        select: { profileImg: true, username: true },
-      });
+      const users = await prisma.user.findMany({});
       res.json(users);
     } catch (e) {
       console.log(e);
@@ -69,15 +72,17 @@ class AuthController {
 
   async editUser(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.query.id as string;
       const user = await prisma.user.findFirst({ where: { id } });
       if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
       const body = req.body as User;
-      const updatedUser = prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: { id },
         data: body,
-        select: { username: true, profileImg: true },
+        // eslint-disable-next-line camelcase
+        select: { username: true, profileImg: true, class: true, class_id: true },
       });
+      console.log(updatedUser);
       return res.json({ user: updatedUser, message: "Muvaffaqqiyatli yangilandi!" });
     } catch (error) {
       console.log(error);
@@ -86,7 +91,7 @@ class AuthController {
   }
   async deleteUser(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const id = req.query.id as string;
       const user = await prisma.user.findFirst({ where: { id } });
       if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
       const deletedUser = await prisma.user.delete({ where: { id }, select: { username: true, profileImg: true } });
