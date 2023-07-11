@@ -22,6 +22,12 @@ class AuthController {
         return res.status(400).json({ message: "Xatolik yuz berdi!", errors });
       }
       const body = req.body as User;
+      if (body.role === "ADMIN") {
+        const token = req?.headers?.authorization?.split(" ")[1];
+        if (!token) {
+          return res.status(403).json({ message: "User avtorizatsiyadan o'tmagan" });
+        }
+      }
       const candidate = await prisma.user.findFirst({ where: body });
       if (candidate) return res.status(400).json({ message: "Bunday foydalanuvchi mavjud" });
       const hashPassword = bcrypt.hashSync(body.password, 7);
