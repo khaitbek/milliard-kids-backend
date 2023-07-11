@@ -22,7 +22,7 @@ class AuthController {
         return res.status(400).json({ message: "Xatolik yuz berdi!", errors });
       }
       const body = req.body as User;
-      if (body.role === "ADMIN") {
+      if (body.role === "ADMIN" || body.role === "TEACHER") {
         const token = req?.headers?.authorization?.split(" ")[1];
         if (!token) {
           return res.status(403).json({ message: "User avtorizatsiyadan o'tmagan" });
