@@ -75,6 +75,59 @@ class AuthController {
       res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
     }
   }
+  async getStudents(req: Request, res: Response) {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          fullname: true,
+          username: true,
+          id: true,
+          class: true,
+          // eslint-disable-next-line camelcase
+          class_id: true,
+          email: true,
+          profileImg: true,
+        },
+      });
+      res.json(users);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
+    }
+  }
+  async getTeachers(req: Request, res: Response) {
+    try {
+      const users = await prisma.user.findMany({
+        select: {
+          fullname: true,
+          username: true,
+          id: true,
+          class: true,
+          // eslint-disable-next-line camelcase
+          class_id: true,
+          email: true,
+          profileImg: true,
+        },
+      });
+      res.json(users);
+    } catch (e) {
+      console.log(e);
+      res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
+    }
+  }
+
+  async getStudentById(req: Request, res: Response) {
+    const id = req.query.id as string;
+    const user = await prisma.user.findFirst({ where: { id, role: "USER" } });
+    if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
+    return res.json({ user });
+  }
+  async getTeacherById(req: Request, res: Response) {
+    const id = req.query.id as string;
+    const user = await prisma.user.findFirst({ where: { id, role: "TEACHER" } });
+    if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
+    return res.json({ user });
+  }
 
   async editUser(req: Request, res: Response) {
     try {
