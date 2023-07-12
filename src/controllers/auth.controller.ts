@@ -122,6 +122,13 @@ class AuthController {
     }
   }
 
+  async getStudentsByClassId(req: Request, res: Response) {
+    const id = req.query.id as string;
+    // eslint-disable-next-line camelcase
+    const students = await prisma.user.findMany({ where: { class_id: id } });
+    return res.json({ students });
+  }
+
   async getStudentById(req: Request, res: Response) {
     const id = req.query.id as string;
     const user = await prisma.user.findFirst({ where: { id, role: "USER" } });
