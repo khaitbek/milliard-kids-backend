@@ -10,6 +10,7 @@ router.get("/student", authMiddleware, Controller.getStudentById);
 router.get("/teacher", authMiddleware, Controller.getTeacherById);
 router.get("/students", authMiddleware, Controller.getStudents);
 router.get("/teachers", authMiddleware, Controller.getTeachers);
+router.get("/search/:role", authMiddleware, roleMiddleware("ADMIN"), Controller.searchUser);
 router.post("/auth/register", authMiddleware, roleMiddleware("ADMIN"), Controller.register);
 router.post("/auth/login", Controller.login);
 router.put("/user", authMiddleware, roleMiddleware("ADMIN"), Controller.editUser);

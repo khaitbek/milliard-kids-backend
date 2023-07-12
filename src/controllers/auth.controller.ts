@@ -166,6 +166,37 @@ class AuthController {
       res.status(500).json({ message: "Serverda xatolik yuz berdi!" });
     }
   }
+
+  async searchUser(req: Request, res: Response) {
+    try {
+      const role = req.params?.role as User["role"];
+      const query = req.query.query as User["fullname"];
+      const users = await prisma.user.findMany({
+        where: {
+          fullname: {
+            contains: query,
+          },
+          role: role.toUpperCase() as User["role"],
+        },
+        select: {
+          username: true,
+          class: true,
+          // eslint-disable-next-line camelcase
+          class_id: true,
+          fullname: true,
+          id: true,
+          profileImg: true,
+          email: true,
+        },
+      });
+      if (!users) {
+        return res.json({ message: "Hech narsat topilmadi!" });
+      }
+      return res.json({ users, query });
+    } catch (error) {
+      return res.json({ message: "Xatolik!", error });
+    }
+  }
 }
 
 export const Controller = new AuthController();
