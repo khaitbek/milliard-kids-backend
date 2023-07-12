@@ -88,6 +88,9 @@ class AuthController {
           email: true,
           profileImg: true,
         },
+        where: {
+          role: "USER",
+        },
       });
       res.json(users);
     } catch (e) {
@@ -107,6 +110,9 @@ class AuthController {
           class_id: true,
           email: true,
           profileImg: true,
+        },
+        where: {
+          role: "TEACHER",
         },
       });
       res.json(users);
