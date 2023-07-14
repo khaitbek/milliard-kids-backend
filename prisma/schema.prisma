@@ -16,6 +16,21 @@ enum Role {
   TEACHER
 }
 
+enum Skill {
+  COMMUNICATION
+  CRITICAL_THINKING
+  PROBLEM_SOLVING
+  IMPLEMENTATION
+}
+
+model Score {
+  id String @id @default(uuid())
+  skill Skill @default(COMMUNICATION)
+  scores Int[]
+  users User[]
+  createdAt DateTime @default(now())
+}
+
 model User {
   id       String @id @default(uuid())
   email    String @unique
@@ -24,6 +39,7 @@ model User {
   password String
   profileImg String?
   role Role @default(USER) 
+  scores Score[]
   class Class? @relation(fields: [class_id],references: [id])
   class_id String?
   createdAt DateTime @default(now())

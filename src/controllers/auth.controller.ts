@@ -68,7 +68,7 @@ class AuthController {
 
   async getUsers(req: Request, res: Response) {
     try {
-      const users = await prisma.user.findMany({ select: { fullname: true, username: true } });
+      const users = await prisma.user.findMany({});
       res.json(users);
     } catch (e) {
       console.log(e);
@@ -202,6 +202,42 @@ class AuthController {
       return res.json({ users, query });
     } catch (error) {
       return res.json({ message: "Xatolik!", error });
+    }
+  }
+
+  async markStudent(req: Request, res: Response) {
+    try {
+      const id = req.query.id as string;
+      // eslint-disable-next-line camelcase
+      const { scores, skill } = req.body;
+      const student = await prisma.user.findFirst({ where: { id } });
+      if (!student) {
+        return res.status(400).json({ message: "O'quvchi topilmadi!" });
+      }
+      const newStudent = await prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          ...student,
+          scores: {
+            create: {
+              scores,
+              skill,
+            },
+          },
+        },
+        select: {
+          scores: true,
+          fullname: true,
+          email: true,
+          username: true,
+        },
+      });
+      return res.status(200).json({ message: "Muvaffaqqiyatli yangilandi!", student: newStudent });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Xatolik", error });
     }
   }
 }

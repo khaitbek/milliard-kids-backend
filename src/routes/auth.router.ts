@@ -6,6 +6,7 @@ import { Router } from "express";
 export const router = Router();
 
 router.get("/users", Controller.getUsers);
+router.get("/student/mark", authMiddleware, Controller.markStudent);
 router.get("/students/class", authMiddleware, Controller.getStudentsByClassId);
 router.get("/student", authMiddleware, Controller.getStudentById);
 router.get("/teacher", authMiddleware, Controller.getTeacherById);

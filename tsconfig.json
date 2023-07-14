@@ -10,41 +10,21 @@
     "noImplicitAny": false,
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
-    "types": [],
+    "types": ["node"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@db/*": [
-        "./prisma/*",
-      ],
-      "@logs/*": [
-        "./logs/*"
-      ],
-      "@controllers/*": [
-        "./src/controllers/*"
-      ],
-      "@routes/*": [
-        "./src/routes/*"
-      ],
-      "@middlewares/*": [
-        "./src/middlewares/*"
-      ],
-      "@utils/*": [
-        "./src/utils/*"
-      ]
+      "@/*": ["./src/*"],
+      "@db/*": ["./prisma/*"],
+      "@logs/*": ["./logs/*"],
+      "@controllers/*": ["./src/controllers/*"],
+      "@routes/*": ["./src/routes/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
-  "include": [
-    "src/*"
-  ],
-  "exclude": [
-    "node_modules"
-  ],
+  "include": ["src/*"],
+  "exclude": ["node_modules"],
   "ts-node": {
-    "require": [
-      "tsconfig-paths/register"
-    ]
+    "require": ["tsconfig-paths/register"]
   }
 }
