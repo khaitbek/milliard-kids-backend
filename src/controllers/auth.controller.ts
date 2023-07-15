@@ -131,7 +131,19 @@ class AuthController {
 
   async getStudentById(req: Request, res: Response) {
     const id = req.query.id as string;
-    const user = await prisma.user.findFirst({ where: { id, role: "USER" } });
+    const user = await prisma.user.findFirst({
+      where: { id, role: "USER" },
+      select: {
+        class: true,
+        // eslint-disable-next-line camelcase
+        class_id: true,
+        email: true,
+        createdAt: true,
+        scores: true,
+        username: true,
+        profileImg: true,
+      },
+    });
     if (!user) return res.status(400).json({ message: id + " ko'rinishidagi ID ga ega foydalanuvchi topilmadi!" });
     return res.json({ user });
   }
