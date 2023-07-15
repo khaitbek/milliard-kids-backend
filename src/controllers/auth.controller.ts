@@ -229,6 +229,7 @@ class AuthController {
         },
         select: {
           scores: true,
+
           fullname: true,
           email: true,
           username: true,
