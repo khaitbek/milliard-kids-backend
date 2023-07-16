@@ -2,7 +2,22 @@ import { Request, Response } from "express";
 import { prisma } from "./../../prisma/client";
 class ClassController {
   async getAll(req: Request, res: Response) {
-    const classes = await prisma.class.findMany({ select: { name: true, students: true, id: true } });
+    const classes = await prisma.class.findMany({
+      select: {
+        name: true,
+        students: {
+          select: {
+            email: true,
+            fullname: true,
+            id: true,
+            scores: true,
+            createdAt: true,
+            class: true,
+          },
+        },
+        id: true,
+      },
+    });
     return res.json({ message: "Muvaffaqqiyatli amalga oshirildi!", classes });
   }
   async getById(req: Request, res: Response) {
