@@ -27,7 +27,8 @@ model Score {
   id String @id @default(uuid())
   skill Skill @default(COMMUNICATION)
   scores Int[]
-  users User[]
+  user User? @relation(fields: [userId],references: [id])
+  userId String?
   createdAt DateTime @default(now())
 }
 
