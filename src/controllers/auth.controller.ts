@@ -221,13 +221,15 @@ class AuthController {
     try {
       const id = req.query.id as string;
       // eslint-disable-next-line camelcase
-      const { scores } = req.body;
       const student = await prisma.user.findFirst({ where: { id } });
       if (!student) {
         return res.status(400).json({ message: "O'quvchi topilmadi!" });
       }
-      const newScores = prisma.score.createMany({ data: scores });
-      return res.status(200).json({ message: "Muvaffaqqiyatli yangilandi!" });
+      console.log([{ ...req.body[0] }, { ...req.body[1] }, { ...req.body[2] }, { ...req.body[3] }]);
+      const newScores = await prisma.score.createMany({
+        data: [{ ...req.body[0] }, { ...req.body[1] }, { ...req.body[2] }, { ...req.body[3] }],
+      });
+      return res.status(200).json({ message: "Muvaffaqqiyatli yangilandi!", newScores });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ message: "Xatolik", error });

@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+  previewFeatures = ["fullTextSearch","createMany"]
 }
 
 datasource db {
@@ -29,7 +29,7 @@ model Score {
   scores Int[]
   user User? @relation(fields: [userId],references: [id])
   userId String?
-  createdAt DateTime @default(now())
+  createdAt String
 }
 
 model User {
